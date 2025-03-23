@@ -1,67 +1,84 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using tpmodul6_103022330051;
 
-namespace tpmodul6_103022300046
+namespace tpmodul6_103022330051
 {
-    //membuat class SayaTubeVideo
-    internal class SayaTubeVideo
+    class Program
     {
-        //atribut
-        private int id;
-        private string title;
-        private int playCount;
-
-        //konstruktor
-        public SayaTubeVideo(string title)
+        static void Main(string[] args)
         {
-
-            // prekondisi
-            Contract.Requires(!string.IsNullOrEmpty(title), "Judul video tidak boleh kosong.");
-            Contract.Requires(title.Length <= 100, "Judul video tidak boleh lebih dari 100 karakter.");
-
-            //jika contract dilanggar akan terjadi exception
-            if (string.IsNullOrEmpty(title))
-                throw new ArgumentException("Judul video tidak boleh kosong.");
-            if (title.Length > 100)
-                throw new ArgumentException("Judul video tidak boleh lebih dari 100 karakter.");
-
-            //generate id secara random
-            Random random = new Random();
-            this.id = random.Next(10000, 99999);
-
-            //inisialisasi atribut
-            this.title = title;
-            this.playCount = 0;
-        }
-
-        //method IncreasePlayCount
-        public void IncreasePlayCount(int playCount)
-        {
-            // prekondisi
-            Contract.Requires(playCount > 0 && playCount <= 10000000, "Jumlah play count harus antara 1 dan 10.000.000.");
-
-            //jika contract dilanggar akan terjadi exception
-            if (playCount <= 0 || playCount > 10000000)
-                throw new ArgumentOutOfRangeException(nameof(playCount), "Jumlah play count harus antara 1 dan 10.000.000.");
-
-            // Menghindari overflow menggunakan checked
-            checked
+            try
             {
-                this.playCount += playCount;
+                // membuat objek dengan valid
+                Console.WriteLine("Contoh input judul video valid");
+                SayaTubeVideo video = new SayaTubeVideo("Tutorial Design By Contract – Rakha_Raihanurrahman");
+                video.PrintVideoDetails();
+                Console.WriteLine("\n");
+
+                // membuat objek dengan judul tidak valid (lebih dari 100 karakter)
+                try
+                {
+                    Console.WriteLine("Contoh input judul video invalid (lebih dari 100 karakter)");
+                    SayaTubeVideo videoInvalid = new SayaTubeVideo(new string('a', 101));
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Gagal membuat objek videoInvalid: {ex.Message}");
+                }
+                Console.WriteLine("\n");
+
+
+                // membuat objek dengan tidak valid (judul null)
+                try
+                {
+                    Console.WriteLine("Contoh input judul video invalid (null)");
+                    SayaTubeVideo videoInvalidNull = new SayaTubeVideo(null);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Gagal membuat objek videoInvalidNull: {ex.Message}");
+                }
+                Console.WriteLine("\n");
+
+
+                // Menambahkan play count valid
+                Console.WriteLine("Contoh input playcount valid, nilai = 100");
+                video.IncreasePlayCount(100);
+                Console.WriteLine("Setelah ditambahkan playcount:");
+                video.PrintVideoDetails();
+                Console.WriteLine("\n");
+
+                // menambahkan play count dengan nilai tidak valid (melebihi batas)
+                try
+                {
+                    Console.WriteLine("Contoh input playcount tidak valid (melebihi batas), nilai = 10000001");
+                    video.IncreasePlayCount(10000001);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Gagal menambah play count: {ex.Message}");
+                }
+                Console.WriteLine("\n");
+
+                // menambahkan play count dengan nilai tidak valid (kurang dari 0)
+                try
+                {
+                    Console.WriteLine("Contoh input playcount tidak valid (kurang dari 0), nilai = -1");
+                    video.IncreasePlayCount(-1);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Gagal menambah play count: {ex.Message}");
+                }
+                Console.WriteLine("\n");
+
+                video.PrintVideoDetails();
+
             }
-        }
-
-
-        //method PrintVideoDetail
-        public void PrintVideoDetails()
-        {
-            Console.WriteLine("ID Video: " + id);
-            Console.WriteLine("Judul Video: " + title);
-            Console.WriteLine("Jumlah Play: " + playCount);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Gagal menjalankan program: {ex.Message}");
+            }
         }
     }
 }
